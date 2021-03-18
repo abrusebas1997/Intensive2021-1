@@ -31,3 +31,9 @@ class AppointmentUpdateView(SuccessMessageMixin, UpdateView):
     model = Appointment
     fields = ['name', 'phone_number', 'time', 'time_zone']
     success_message = 'Appointment succesfully updated.'
+
+class AppointmentDetailView(DeleteView):
+    """Prompts users to confirm deletion of an appointment"""
+
+    model = Appointment
+    success_url = reverse_lazy('list_appointments')

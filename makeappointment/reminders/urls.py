@@ -7,4 +7,5 @@ from .views import (
 urlpatterns = [
     # Create, update, delete
     re_path(r'^new$', AppointmentCreateView.as_view(), name='new_appointment'),
+    re_path(r'^$', AppointmentListView.as_view(), name='list_appointments'),
 ]
