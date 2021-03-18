@@ -8,6 +8,10 @@ from django.views.generic.list import ListView
 
 from .models import Appointment
 
+class AppointmentListView(ListView):
+    """Shows users a list of appointments"""
+
+    model = Appointment
 
 class AppointmentCreateView(SuccessMessageMixin, CreateView):
     """Powers a form to create a new Appointment"""
