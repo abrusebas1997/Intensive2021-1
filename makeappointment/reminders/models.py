@@ -28,6 +28,16 @@ class Appointment(models.Model):
     def get_absolute_url(self):
         return reverse('reminders:view_appointment', args=[str(self.id)])
 
+    def clean(self):
+        """Checks that appointments are not scheduled in the past"""
+
+        appointment_time = arrow.get(self.time, self.time_zone.zone)
+
+        if appointment_time < arrow.utcnow():
+            raise ValidationError(
+                'You cannot schedule an appointment for the past. '
+                'Please check your time and time_zone')
+
 
     def schedule_reminder(self):
         """Schedule a Dramatiq task to send a reminder for this appointment"""
@@ -64,3 +74,7 @@ class Appointment(models.Model):
 
         # Save our appointment again, with the new task_id
         super(Appointment, self).save(*args, **kwargs)
+
+    def cancel_task(self):
+        redis_client = redis.Redis(host=settings.REDIS_LOCAL, port=6379, db=0)
+        redis_client.hdel("dramatiq:default.DQ.msgs", self.task_id)
