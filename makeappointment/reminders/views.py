@@ -13,6 +13,11 @@ class AppointmentListView(ListView):
 
     model = Appointment
 
+class AppointmentDetailView(DetailView):
+    """To show the user a single appointment"""
+    model = Appointment
+
+
 class AppointmentCreateView(SuccessMessageMixin, CreateView):
     """Powers a form to create a new Appointment"""
 
