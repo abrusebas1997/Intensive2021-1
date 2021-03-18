@@ -27,3 +27,22 @@ class Appointment(models.Model):
 
     def get_absolute_url(self):
         return reverse('reminders:view_appointment', args=[str(self.id)])
+
+
+    def schedule_reminder(self):
+        """Schedule a Dramatiq task to send a reminder for this appointment"""
+
+        # Calculate the correct time to send this reminder
+        appointment_time = arrow.get(self.time, self.time_zone.zone)
+        reminder_time = appointment_time.shift(minutes=-30)
+        now = arrow.now(self.time_zone.zone)
+        milli_to_wait = int(
+            (reminder_time - now).total_seconds()) * 1000
+
+        # Schedule the Dramatiq task
+        from .tasks import send_sms_reminder
+        result = send_sms_reminder.send_with_options(
+            args=(self.pk,),
+            delay=milli_to_wait)
+
+        return result.options['redis_message_id']

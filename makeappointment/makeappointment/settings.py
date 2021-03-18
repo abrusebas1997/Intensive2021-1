@@ -25,6 +25,22 @@ SECRET_KEY = 'z3l)x!atfw-jaritnt*gyij#iz5kke&r9=12un$flyf9$!1(44'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+DRAMATIQ_BROKER = {
+    "BROKER": "dramatiq.brokers.redis.RedisBroker",
+    "OPTIONS": {
+        "url": 'redis://localhost:6379/0',
+    },
+    "MIDDLEWARE": [
+        "dramatiq.middleware.Prometheus",
+        "dramatiq.middleware.AgeLimit",
+        "dramatiq.middleware.TimeLimit",
+        "dramatiq.middleware.Callbacks",
+        "dramatiq.middleware.Retries",
+        "django_dramatiq.middleware.AdminMiddleware",
+        "django_dramatiq.middleware.DbConnectionsMiddleware",
+    ]
+}
+
 ALLOWED_HOSTS = []
 
 
@@ -37,6 +53,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_dramatiq',
+    'reminders',
 ]
 
 MIDDLEWARE = [
